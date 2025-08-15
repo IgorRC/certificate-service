@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  sonarqube:
+    image: sonarqube:10.5.1-community
+    container_name: sonarqube-certificados
+    ports:
+      - "9500:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data_certificate:/opt/sonarqube/data
+      - sonarqube_extensions_certificate:/opt/sonarqube/extensions
+
+  db-certificados:
+    image: postgres:15
+    container_name: certificados-db
+    restart: always
+    environment:
+      POSTGRES_DB: certificados_db
+      POSTGRES_USER: certificados_user
+      POSTGRES_PASSWORD: certificados_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - certificados_pgdata:/var/lib/postgresql/data
+    networks:
+      - certificados-net
+
+volumes:
+  certificados_pgdata:
+  sonarqube_data_certificate:
+  sonarqube_extensions_certificate:
+
+networks:
+  certificados-net:
+    driver: bridge
